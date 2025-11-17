@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMS - Interfaz de Control</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.25em;
+        }
+        .form-container {
+            padding: 25px;
+            display: grid;
+            gap: 15px;
+        }
+        .form-section {
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .form-section h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+            font-size: 1em;
+            color: #007bff;
+        }
+        .form-group {
+            display: grid;
+            gap: 5px;
+        }
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="datetime-local"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .action-buttons button, .btn-full-width {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-full-width {
+            grid-column: 1 / -1; /* Ocupa todo el ancho */
+            background-color: #28a745;
+        }
+        .btn-full-width:hover { background-color: #218838; }
+        
+        .action-buttons .btn-checkout { background-color: #dc3545; }
+        .action-buttons .btn-checkout:hover { background-color: #c82333; }
+        
+        .action-buttons .btn-read { background-color: #ffc107; color: #333; }
+        .action-buttons .btn-read:hover { background-color: #e0a800; }
+
+        pre {
+            background-color: #2a2a2a;
+            color: #f1f1f1;
+            padding: 15px;
+            margin: 0 25px 25px 25px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            display: none; /* Oculto hasta que haya respuesta */
+        }
+        pre.success { color: #8cff8c; }
+        pre.error { color: #ff8c8c; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h2>Interfaz de Control PMS</h2>
+        </header>
+
+        <div class="form-container">
+            <div class="form-section">
+                <h3>Configuración del Servidor</h3>
+                <div class="form-group">
+                    <label for="server_ip">Server Address (IP)</label>
+                    <input type="text" id="server_ip" value="127.0.0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="server_port">Port</label>
+                    <input type="number" id="server_port" value="8888" required>
+                </div>
+                <div class="form-group">
+                    <label for="dest_addr">Dirección de Destino (dd)</label>
+                    <input type="text" id="dest_addr" value="01" required maxlength="2" title="Dirección de 2 bytes">
+                </div>
+                <div class="form-group">
+                    <label for="src_addr">Dirección de Origen (ss)</label>
+                    <input type="text" id="src_addr" value="03" required maxlength="2" title="Dirección de 2 bytes">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Datos de Habitación</h3>
+                <div class="form-group">
+                    <label for="room_number">Número de Habitación (R)</label>
+                    <input type="text" id="room_number" value="102" required>
+                </div>
+                <div class="form-group">
+                    <label for="guest_name">Nombre de Huésped (N)</label>
+                    <input type="text" id="guest_name" value="Duck" required>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="cancel_card" title="Si no se marca, dd=00 (solo DB)[cite: 40]. Si se marca, dd=Dirección de Destino (cancela tarjeta)[cite: 41].">
+                    <label for="cancel_card">Cancelar tarjeta al hacer check-out</label>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Datos de Estadía (Solo para Check-in)</h3>
+                <div class="form-group">
+                    <label for="check_in">Check-in (D)</label>
+                    <input type="datetime-local" id="check_in" required>
+                </div>
+                <div class="form-group">
+                    <label for="check_out">Check-out (O)</label>
+                    <input type="datetime-local" id="check_out" required>
+                </div>
+            </div>
+
+            <button type="button" class="btn-full-width" id="btn-create">Crear Tarjeta (Check-in 'G')</button>
+            
+            <div class="action-buttons">
+                <button type="button" class="btn-checkout" id="btn-checkout">Guest Check-out ('B')</button>
+                <button type="button" class="btn-read" id="btn-read">Leer Tarjeta ('E')</button>
+            </div>
+        </div>
+
+        <pre id="response"></pre>
+    </div>
+
+    <script>
+        // Pre-llenar fechas para demostración
+        function setDemoTimes() {
+            const now = new Date();
+            const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+            document.getElementById('check_in').value = now.toISOString().substring(0, 16);
+            document.getElementById('check_out').value = tomorrow.toISOString().substring(0, 16);
+        }
+        setDemoTimes();
+
+        const responseEl = document.getElementById('response');
+        const API_BASE = 'http://127.0.0.1:5000';
+
+        // --- Datos Comunes ---
+        function getCommonData() {
+            return {
+                server_ip: document.getElementById('server_ip').value,
+                server_port: parseInt(document.getElementById('server_port').value, 10),
+                dest_addr: document.getElementById('dest_addr').value,
+                src_addr: document.getElementById('src_addr').value,
+            };
+        }
+
+        // --- Acción 1: Crear Tarjeta (Check-in) ---
+        document.getElementById('btn-create').addEventListener('click', async () => {
+            const data = {
+                ...getCommonData(),
+                guest_name: document.getElementById('guest_name').value,
+                room_number: document.getElementById('room_number').value,
+                check_in: document.getElementById('check_in').value,
+                check_out: document.getElementById('check_out').value,
+            };
+            await sendRequest('/create-card', data);
+        });
+
+        // --- Acción 2: Guest Check-out ---
+        document.getElementById('btn-checkout').addEventListener('click', async () => {
+            const data = {
+                ...getCommonData(),
+                room_number: document.getElementById('room_number').value,
+                guest_name: document.getElementById('guest_name').value, // Opcional 
+                cancel_card: document.getElementById('cancel_card').checked // Lógica dd=00 [cite: 40] o dd=cliente [cite: 41]
+            };
+            await sendRequest('/checkout-guest', data);
+        });
+
+        // --- Acción 3: Leer Tarjeta ---
+        document.getElementById('btn-read').addEventListener('click', async () => {
+            const data = getCommonData(); // Solo necesita datos de conexión y destino 
+            await sendRequest('/read-card', data);
+        });
+
+        // --- Función genérica para enviar la solicitud ---
+        async function sendRequest(endpoint, data) {
+            responseEl.style.display = 'none';
+            responseEl.className = '';
+
+            try {
+                const response = await fetch(API_BASE + endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                responseEl.style.display = 'block';
+
+                if (response.ok) {
+                    responseEl.className = 'success';
+                    responseEl.textContent = `Éxito:\nComando Enviado:\n${result.sent}\n\nRespuesta Recibida:\n${result.received_hex}\nRespuesta Decodificada:\n${result.received_text}`;
+                } else {
+                    throw new Error(result.error);
+                }
+
+            } catch (error) {
+                responseEl.style.display = 'block';
+                responseEl.className = 'error';
+                responseEl.textContent = `Error de conexión:\n${error.message}\n\n(Asegúrate de que el backend de Python esté ejecutándose.)`;
+            }
+        }
+    </script>
+</body>
+</html>
