@@ -1,4 +1,4 @@
-# 🏨 Interfaz PMS Vislaock
+# 🏨 Interfaz PMS Visalock
 
 Este proyecto es una interfaz web (frontend) y un servidor (backend) para interactuar con un sistema de gestión de propiedades (PMS) y crear tarjetas de huésped, basándose en la documentación de la API TCP/IP.
 
